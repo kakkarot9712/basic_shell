@@ -16,7 +16,13 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Fprintf(os.Stdout, "%v: command not found\n", strings.TrimRight(buff, "\n"))
+		chunks := strings.Split(buff, " ")
+		cmd := chunks[0]
+		if cmd == "exit" {
+			os.Exit(0)
+		} else {
+			fmt.Fprintf(os.Stdout, "%v: command not found\n", strings.TrimRight(buff, "\n"))
+		}
 	}
 
 }
