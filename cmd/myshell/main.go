@@ -20,6 +20,8 @@ func main() {
 		cmd := chunks[0]
 		if cmd == "exit" {
 			os.Exit(0)
+		} else if cmd == "echo" {
+			fmt.Fprint(os.Stdout, strings.Join(chunks[1:], " "))
 		} else {
 			fmt.Fprintf(os.Stdout, "%v: command not found\n", strings.TrimRight(buff, "\n"))
 		}
