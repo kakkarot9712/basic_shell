@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 )
 
@@ -24,10 +25,22 @@ func main() {
 			fmt.Fprint(os.Stdout, strings.Join(chunks[1:], " "))
 		} else if cmd == string(TYPE) {
 			testType := strings.TrimRight(chunks[1], "\n")
-			if testType == string(ECHO) || testType == string(TYPE) || testType == string(EXIT) {
+			if slices.Contains(builtinCommands, builtin(testType)) {
 				fmt.Fprintf(os.Stdout, "%v is a shell builtin\n", testType)
 			} else {
-				fmt.Fprintf(os.Stdout, "%v: not found\n", testType)
+				pathstr := os.Getenv("PATH")
+				paths := strings.Split(pathstr, ":")
+				cmdFound := false
+				for _, p := range paths {
+					found := searchForCommand(p, testType)
+					if found {
+						cmdFound = true
+						fmt.Fprintf(os.Stdout, "%v is %v/%v\n", testType, p, testType)
+					}
+				}
+				if !cmdFound {
+					fmt.Fprintf(os.Stdout, "%v: not found\n", testType)
+				}
 			}
 		} else {
 			fmt.Fprintf(os.Stdout, "%v: command not found\n", strings.TrimRight(buff, "\n"))
